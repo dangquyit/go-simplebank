@@ -12,10 +12,6 @@ type Account struct {
 	ID            int64     `json:"id"`
 	AccountNumber int64     `json:"account_number"`
 	Owner         string    `json:"owner"`
-	UserName      string    `json:"user_name"`
-	Email         string    `json:"email"`
-	Password      string    `json:"password"`
-	PhoneNumber   int64     `json:"phone_number"`
 	Balance       int64     `json:"balance"`
 	Currency      string    `json:"currency"`
 	CreatedAt     time.Time `json:"created_at"`

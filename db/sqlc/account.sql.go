@@ -14,24 +14,16 @@ const createAccount = `-- name: CreateAccount :one
 INSERT INTO accounts (
     "account_number",
     "owner",
-    "user_name",
-    "email",
-    "password",
-    "phone_number",
     "balance",
     "currency"
 ) VALUES (
-    $1, $2, $3, $4, $5, $6, $7, $8
-) RETURNING id, account_number, owner, user_name, email, password, phone_number, balance, currency, created_at, updated_at
+    $1, $2, $3, $4
+) RETURNING id, account_number, owner, balance, currency, created_at, updated_at
 `
 
 type CreateAccountParams struct {
 	AccountNumber int64  `json:"account_number"`
 	Owner         string `json:"owner"`
-	UserName      string `json:"user_name"`
-	Email         string `json:"email"`
-	Password      string `json:"password"`
-	PhoneNumber   int64  `json:"phone_number"`
 	Balance       int64  `json:"balance"`
 	Currency      string `json:"currency"`
 }
@@ -40,10 +32,6 @@ func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (A
 	row := q.db.QueryRowContext(ctx, createAccount,
 		arg.AccountNumber,
 		arg.Owner,
-		arg.UserName,
-		arg.Email,
-		arg.Password,
-		arg.PhoneNumber,
 		arg.Balance,
 		arg.Currency,
 	)
@@ -52,10 +40,6 @@ func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (A
 		&i.ID,
 		&i.AccountNumber,
 		&i.Owner,
-		&i.UserName,
-		&i.Email,
-		&i.Password,
-		&i.PhoneNumber,
 		&i.Balance,
 		&i.Currency,
 		&i.CreatedAt,
@@ -75,7 +59,7 @@ func (q *Queries) DeleteAccount(ctx context.Context, accountNumber int64) error 
 }
 
 const getAccount = `-- name: GetAccount :one
-SELECT id, account_number, owner, user_name, email, password, phone_number, balance, currency, created_at, updated_at FROM accounts
+SELECT id, account_number, owner, balance, currency, created_at, updated_at FROM accounts
 WHERE account_number = $1 LIMIT 1
 `
 
@@ -86,10 +70,6 @@ func (q *Queries) GetAccount(ctx context.Context, accountNumber int64) (Account,
 		&i.ID,
 		&i.AccountNumber,
 		&i.Owner,
-		&i.UserName,
-		&i.Email,
-		&i.Password,
-		&i.PhoneNumber,
 		&i.Balance,
 		&i.Currency,
 		&i.CreatedAt,
@@ -99,7 +79,7 @@ func (q *Queries) GetAccount(ctx context.Context, accountNumber int64) (Account,
 }
 
 const listAccount = `-- name: ListAccount :many
-SELECT id, account_number, owner, user_name, email, password, phone_number, balance, currency, created_at, updated_at FROM accounts
+SELECT id, account_number, owner, balance, currency, created_at, updated_at FROM accounts
 ORDER BY id
 LIMIT $1
 OFFSET $2
@@ -123,10 +103,6 @@ func (q *Queries) ListAccount(ctx context.Context, arg ListAccountParams) ([]Acc
 			&i.ID,
 			&i.AccountNumber,
 			&i.Owner,
-			&i.UserName,
-			&i.Email,
-			&i.Password,
-			&i.PhoneNumber,
 			&i.Balance,
 			&i.Currency,
 			&i.CreatedAt,

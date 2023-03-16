@@ -12,10 +12,6 @@ func createRandomAccount(t *testing.T) Account {
 	arg := CreateAccountParams{
 		AccountNumber: util.RandomAccountNumber(),
 		Owner:         util.RandomOwner(),
-		UserName:      util.RandomUserName(),
-		Email:         util.RandomEmail(),
-		Password:      util.RandomPassword(),
-		PhoneNumber:   util.RandomAccountNumber(),
 		Balance:       util.RandomMoney(),
 		Currency:      util.RandomCurrency(),
 	}
@@ -27,10 +23,6 @@ func createRandomAccount(t *testing.T) Account {
 
 	require.Equal(t, arg.AccountNumber, account.AccountNumber)
 	require.Equal(t, arg.Owner, account.Owner)
-	require.Equal(t, arg.UserName, account.UserName)
-	require.Equal(t, arg.Email, account.Email)
-	require.Equal(t, arg.Password, account.Password)
-	require.Equal(t, arg.PhoneNumber, account.PhoneNumber)
 	require.Equal(t, arg.Balance, account.Balance)
 	require.Equal(t, arg.Currency, account.Currency)
 
@@ -55,10 +47,6 @@ func TestGetAccount(t *testing.T) {
 	require.Equal(t, account1.ID, account2.ID)
 	require.Equal(t, account1.AccountNumber, account2.AccountNumber)
 	require.Equal(t, account1.Owner, account2.Owner)
-	require.Equal(t, account1.UserName, account2.UserName)
-	require.Equal(t, account1.Email, account2.Email)
-	require.Equal(t, account1.Password, account2.Password)
-	require.Equal(t, account1.PhoneNumber, account2.PhoneNumber)
 	require.Equal(t, account1.Balance, account2.Balance)
 	require.Equal(t, account1.Currency, account2.Currency)
 	require.WithinDuration(t, account1.CreatedAt, account2.CreatedAt, time.Second)

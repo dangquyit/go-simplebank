@@ -29,7 +29,7 @@ func (store *Store) execTx(ctx context.Context, fn func(*Queries) error) error {
 	err = fn(q)
 	if err != nil {
 		if rbErr := tx.Rollback(); rbErr != nil {
-			return fmt.Errorf("tx err: %v", "rb err: %v", err, rbErr)
+			return fmt.Errorf("tx err: %v rb err: %v", err, rbErr)
 		}
 	}
 
@@ -46,8 +46,45 @@ type TransferTxResult struct {
 	Transfer    Transfer `json:"transfer"`
 	FromAccount Account  `json:"from_account"`
 	ToAccount   Account  `json:"to_account"`
+	FromEntry   Entry    `json:"from_entry"`
+	ToEntry     Entry    `json:"to_entry"`
 }
 
-func (store *Store) TransferTx(ctx context.Context, arg TransferParams) {
+func (store *Store) TransferTx(ctx context.Context, arg TransferParams) (TransferTxResult, error) {
+	var result TransferTxResult
 
+	err := store.execTx(ctx, func(q *Queries) error {
+		var err error
+
+		result.Transfer, err = q.CreateTransfer(ctx, CreateTransferParams{
+			FromAccountNumber: arg.FromAccountNumber,
+			ToAccountNumber:   arg.ToAccountNumber,
+			Amount:            arg.Amount,
+		})
+		if err != nil {
+			return err
+		}
+
+		result.FromEntry, err = q.CreateEntry(ctx, CreateEntryParams{
+			AccountNumber: arg.FromAccountNumber,
+			Amount:        -arg.Amount,
+		})
+		if err != nil {
+			return err
+		}
+
+		result.ToEntry, err = q.CreateEntry(ctx, CreateEntryParams{
+			AccountNumber: arg.ToAccountNumber,
+			Amount:        arg.Amount,
+		})
+		if err != nil {
+			return err
+		}
+
+		// TODO: update accounts balance
+
+		return nil
+	})
+
+	return result, err
 }

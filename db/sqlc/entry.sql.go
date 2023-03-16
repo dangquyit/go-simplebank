@@ -36,6 +36,24 @@ func (q *Queries) CreateEntry(ctx context.Context, arg CreateEntryParams) (Entry
 	return i, err
 }
 
+const getEntryById = `-- name: GetEntryById :one
+SELECT id, account_number, amount, created_at, updated_at FROM entries
+WHERE id = $1 LIMIT 1
+`
+
+func (q *Queries) GetEntryById(ctx context.Context, id int64) (Entry, error) {
+	row := q.db.QueryRowContext(ctx, getEntryById, id)
+	var i Entry
+	err := row.Scan(
+		&i.ID,
+		&i.AccountNumber,
+		&i.Amount,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const getEntryFromAccountNumber = `-- name: GetEntryFromAccountNumber :many
 SELECT id, account_number, amount, created_at, updated_at FROM entries
 WHERE account_number = $1

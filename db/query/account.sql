@@ -5,7 +5,7 @@ INSERT INTO accounts (
     "user_name",
     "email",
     "password",
-    "number",
+    "phone_number",
     "balance",
     "currency"
 ) VALUES (

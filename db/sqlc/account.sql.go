@@ -17,21 +17,21 @@ INSERT INTO accounts (
     "user_name",
     "email",
     "password",
-    "number",
+    "phone_number",
     "balance",
     "currency"
 ) VALUES (
     $1, $2, $3, $4, $5, $6, $7, $8
-) RETURNING id, account_number, owner, user_name, email, password, number, balance, currency, created_at, updated_at
+) RETURNING id, account_number, owner, user_name, email, password, phone_number, balance, currency, created_at, updated_at
 `
 
 type CreateAccountParams struct {
-	AccountNumber int32  `json:"account_number"`
+	AccountNumber int64  `json:"account_number"`
 	Owner         string `json:"owner"`
 	UserName      string `json:"user_name"`
 	Email         string `json:"email"`
 	Password      string `json:"password"`
-	Number        int64  `json:"number"`
+	PhoneNumber   int64  `json:"phone_number"`
 	Balance       int64  `json:"balance"`
 	Currency      string `json:"currency"`
 }
@@ -43,7 +43,7 @@ func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (A
 		arg.UserName,
 		arg.Email,
 		arg.Password,
-		arg.Number,
+		arg.PhoneNumber,
 		arg.Balance,
 		arg.Currency,
 	)
@@ -55,7 +55,7 @@ func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (A
 		&i.UserName,
 		&i.Email,
 		&i.Password,
-		&i.Number,
+		&i.PhoneNumber,
 		&i.Balance,
 		&i.Currency,
 		&i.CreatedAt,
@@ -69,17 +69,17 @@ DELETE FROM accounts
 WHERE account_number = $1
 `
 
-func (q *Queries) DeleteAccount(ctx context.Context, accountNumber int32) error {
+func (q *Queries) DeleteAccount(ctx context.Context, accountNumber int64) error {
 	_, err := q.db.ExecContext(ctx, deleteAccount, accountNumber)
 	return err
 }
 
 const getAccount = `-- name: GetAccount :one
-SELECT id, account_number, owner, user_name, email, password, number, balance, currency, created_at, updated_at FROM accounts
+SELECT id, account_number, owner, user_name, email, password, phone_number, balance, currency, created_at, updated_at FROM accounts
 WHERE account_number = $1 LIMIT 1
 `
 
-func (q *Queries) GetAccount(ctx context.Context, accountNumber int32) (Account, error) {
+func (q *Queries) GetAccount(ctx context.Context, accountNumber int64) (Account, error) {
 	row := q.db.QueryRowContext(ctx, getAccount, accountNumber)
 	var i Account
 	err := row.Scan(
@@ -89,7 +89,7 @@ func (q *Queries) GetAccount(ctx context.Context, accountNumber int32) (Account,
 		&i.UserName,
 		&i.Email,
 		&i.Password,
-		&i.Number,
+		&i.PhoneNumber,
 		&i.Balance,
 		&i.Currency,
 		&i.CreatedAt,
@@ -99,7 +99,7 @@ func (q *Queries) GetAccount(ctx context.Context, accountNumber int32) (Account,
 }
 
 const listAccount = `-- name: ListAccount :many
-SELECT id, account_number, owner, user_name, email, password, number, balance, currency, created_at, updated_at FROM accounts
+SELECT id, account_number, owner, user_name, email, password, phone_number, balance, currency, created_at, updated_at FROM accounts
 ORDER BY id
 LIMIT $1
 OFFSET $2
@@ -126,7 +126,7 @@ func (q *Queries) ListAccount(ctx context.Context, arg ListAccountParams) ([]Acc
 			&i.UserName,
 			&i.Email,
 			&i.Password,
-			&i.Number,
+			&i.PhoneNumber,
 			&i.Balance,
 			&i.Currency,
 			&i.CreatedAt,
@@ -153,12 +153,12 @@ RETURNING account_number, balance, created_at, updated_at
 `
 
 type UpdateAccountParams struct {
-	AccountNumber int32 `json:"account_number"`
+	AccountNumber int64 `json:"account_number"`
 	Balance       int64 `json:"balance"`
 }
 
 type UpdateAccountRow struct {
-	AccountNumber int32     `json:"account_number"`
+	AccountNumber int64     `json:"account_number"`
 	Balance       int64     `json:"balance"`
 	CreatedAt     time.Time `json:"created_at"`
 	UpdatedAt     time.Time `json:"updated_at"`

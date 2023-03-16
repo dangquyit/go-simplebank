@@ -1,11 +1,11 @@
 CREATE TABLE "accounts" (
                             "id" BIGSERIAL PRIMARY KEY,
-                            "account_number" int UNIQUE NOT NULL,
+                            "account_number" bigint UNIQUE NOT NULL,
                             "owner" varchar NOT NULL,
                             "user_name" varchar UNIQUE NOT NULL,
                             "email" varchar UNIQUE NOT NULL,
                             "password" varchar NOT NULL,
-                            "number" bigint UNIQUE NOT NULL,
+                            "phone_number" bigint UNIQUE NOT NULL,
                             "balance" bigint NOT NULL,
                             "currency" varchar NOT NULL,
                             "created_at" timestamp NOT NULL DEFAULT (now()),

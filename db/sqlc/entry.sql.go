@@ -14,8 +14,8 @@ INSERT INTO entries (
     "account_number",
     "amount"
 ) VALUES (
-             $1, $2
-         ) RETURNING id, account_number, amount, created_at, updated_at
+    $1, $2
+) RETURNING id, account_number, amount, created_at, updated_at
 `
 
 type CreateEntryParams struct {
@@ -36,22 +36,46 @@ func (q *Queries) CreateEntry(ctx context.Context, arg CreateEntryParams) (Entry
 	return i, err
 }
 
-const getEntry = `-- name: GetEntry :one
+const getEntryFromAccountNumber = `-- name: GetEntryFromAccountNumber :many
 SELECT id, account_number, amount, created_at, updated_at FROM entries
-WHERE account_number = $1 LIMIT 1
+WHERE account_number = $1
+LIMIT $2
+OFFSET $3
 `
 
-func (q *Queries) GetEntry(ctx context.Context, accountNumber int64) (Entry, error) {
-	row := q.db.QueryRowContext(ctx, getEntry, accountNumber)
-	var i Entry
-	err := row.Scan(
-		&i.ID,
-		&i.AccountNumber,
-		&i.Amount,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
-	return i, err
+type GetEntryFromAccountNumberParams struct {
+	AccountNumber int64 `json:"account_number"`
+	Limit         int32 `json:"limit"`
+	Offset        int32 `json:"offset"`
+}
+
+func (q *Queries) GetEntryFromAccountNumber(ctx context.Context, arg GetEntryFromAccountNumberParams) ([]Entry, error) {
+	rows, err := q.db.QueryContext(ctx, getEntryFromAccountNumber, arg.AccountNumber, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Entry{}
+	for rows.Next() {
+		var i Entry
+		if err := rows.Scan(
+			&i.ID,
+			&i.AccountNumber,
+			&i.Amount,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const listEntries = `-- name: ListEntries :many

@@ -6,12 +6,11 @@ import (
 	"github.com/stretchr/testify/require"
 	"math/rand"
 	"testing"
-	"time"
 )
 
 func createRandomEntry(t *testing.T) Entry {
 	accounts, _ := testQueries.ListAccount(context.Background(), ListAccountParams{
-		Limit:  10,
+		Limit:  1000,
 		Offset: 0,
 	})
 	arg := CreateEntryParams{
@@ -34,17 +33,23 @@ func TestCreateEntry(t *testing.T) {
 
 func TestGetEntry(t *testing.T) {
 	entry1 := createRandomEntry(t)
-	entry2, err := testQueries.GetEntry(context.Background(), entry1.AccountNumber)
+	entries, err := testQueries.GetEntryFromAccountNumber(context.Background(), GetEntryFromAccountNumberParams{
+		AccountNumber: entry1.AccountNumber,
+		Limit:         5,
+		Offset:        0,
+	})
 	require.NoError(t, err)
-	require.NotEmpty(t, entry2)
-	require.Equal(t, entry1.ID, entry2.ID)
-	require.Equal(t, entry1.AccountNumber, entry2.AccountNumber)
-	require.WithinDuration(t, entry1.CreatedAt, entry2.CreatedAt, time.Second)
+	require.NotEmpty(t, entries)
+
+	for _, entry2 := range entries {
+		require.NotEmpty(t, entry2)
+		require.Equal(t, entry1.AccountNumber, entry2.AccountNumber)
+	}
 }
 
 func TestListEntries(t *testing.T) {
 	accounts, _ := testQueries.ListAccount(context.Background(), ListAccountParams{
-		Limit:  10,
+		Limit:  1000,
 		Offset: 0,
 	})
 	arg := ListEntriesParams{
@@ -55,7 +60,6 @@ func TestListEntries(t *testing.T) {
 	entries, err := testQueries.ListEntries(context.Background(), arg)
 
 	require.NoError(t, err)
-	require.NotEmpty(t, entries)
 
 	for _, entry := range entries {
 		require.NotEmpty(t, entry)

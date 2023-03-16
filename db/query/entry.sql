@@ -3,12 +3,14 @@ INSERT INTO entries (
     "account_number",
     "amount"
 ) VALUES (
-             $1, $2
-         ) RETURNING *;
+    $1, $2
+) RETURNING *;
 
--- name: GetEntry :one
+-- name: GetEntryFromAccountNumber :many
 SELECT * FROM entries
-WHERE account_number = $1 LIMIT 1;
+WHERE account_number = $1
+LIMIT $2
+OFFSET $3;
 
 -- name: ListEntries :many
 SELECT * FROM entries

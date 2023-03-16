@@ -71,7 +71,7 @@ func TestUpdateAccount(t *testing.T) {
 
 	arg := UpdateAccountParams{
 		AccountNumber: account1.AccountNumber,
-		Balance:       util.RandomAccountNumber(),
+		Balance:       util.RandomMoney(),
 	}
 
 	account2, err := testQueries.UpdateAccount(context.Background(), arg)
@@ -94,8 +94,8 @@ func TestDeleteAccount(t *testing.T) {
 
 func TestListAccount(t *testing.T) {
 	arg := ListAccountParams{
-		Limit:  5,
-		Offset: 5,
+		Limit:  1000,
+		Offset: 0,
 	}
 	listAccount, err := testQueries.ListAccount(context.Background(), arg)
 

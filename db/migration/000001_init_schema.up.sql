@@ -3,7 +3,7 @@ CREATE TABLE "accounts" (
                             "account_number" int UNIQUE NOT NULL,
                             "owner" varchar NOT NULL,
                             "user_name" varchar UNIQUE NOT NULL,
-                                "email" varchar UNIQUE NOT NULL,
+                            "email" varchar UNIQUE NOT NULL,
                             "password" varchar NOT NULL,
                             "number" bigint UNIQUE NOT NULL,
                             "balance" bigint NOT NULL,

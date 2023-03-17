@@ -22,7 +22,19 @@ OFFSET $2;
 UPDATE accounts
 SET balance = $2
 WHERE account_number = $1
-RETURNING account_number, balance, created_at, updated_at;
+RETURNING *;
+
+-- name: UpdateAccountWhenTransfer :one
+UPDATE accounts
+SET balance = balance - sqlc.arg(amount)
+WHERE account_number = sqlc.arg(account_number)
+RETURNING *;
+
+-- name: UpdateAccountWhenReceive :one
+UPDATE accounts
+SET balance = balance + sqlc.arg(amount)
+WHERE account_number = sqlc.arg(account_number)
+RETURNING *;
 
 -- name: DeleteAccount :exec
 DELETE FROM accounts

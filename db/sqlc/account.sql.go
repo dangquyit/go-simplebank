@@ -7,7 +7,6 @@ package db
 
 import (
 	"context"
-	"time"
 )
 
 const createAccount = `-- name: CreateAccount :one
@@ -125,7 +124,7 @@ const updateAccount = `-- name: UpdateAccount :one
 UPDATE accounts
 SET balance = $2
 WHERE account_number = $1
-RETURNING account_number, balance, created_at, updated_at
+RETURNING id, account_number, owner, balance, currency, created_at, updated_at
 `
 
 type UpdateAccountParams struct {
@@ -133,19 +132,69 @@ type UpdateAccountParams struct {
 	Balance       int64 `json:"balance"`
 }
 
-type UpdateAccountRow struct {
-	AccountNumber int64     `json:"account_number"`
-	Balance       int64     `json:"balance"`
-	CreatedAt     time.Time `json:"created_at"`
-	UpdatedAt     time.Time `json:"updated_at"`
+func (q *Queries) UpdateAccount(ctx context.Context, arg UpdateAccountParams) (Account, error) {
+	row := q.db.QueryRowContext(ctx, updateAccount, arg.AccountNumber, arg.Balance)
+	var i Account
+	err := row.Scan(
+		&i.ID,
+		&i.AccountNumber,
+		&i.Owner,
+		&i.Balance,
+		&i.Currency,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
 }
 
-func (q *Queries) UpdateAccount(ctx context.Context, arg UpdateAccountParams) (UpdateAccountRow, error) {
-	row := q.db.QueryRowContext(ctx, updateAccount, arg.AccountNumber, arg.Balance)
-	var i UpdateAccountRow
+const updateAccountWhenReceive = `-- name: UpdateAccountWhenReceive :one
+UPDATE accounts
+SET balance = balance + $1
+WHERE account_number = $2
+RETURNING id, account_number, owner, balance, currency, created_at, updated_at
+`
+
+type UpdateAccountWhenReceiveParams struct {
+	Amount        int64 `json:"amount"`
+	AccountNumber int64 `json:"account_number"`
+}
+
+func (q *Queries) UpdateAccountWhenReceive(ctx context.Context, arg UpdateAccountWhenReceiveParams) (Account, error) {
+	row := q.db.QueryRowContext(ctx, updateAccountWhenReceive, arg.Amount, arg.AccountNumber)
+	var i Account
 	err := row.Scan(
+		&i.ID,
 		&i.AccountNumber,
+		&i.Owner,
 		&i.Balance,
+		&i.Currency,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const updateAccountWhenTransfer = `-- name: UpdateAccountWhenTransfer :one
+UPDATE accounts
+SET balance = balance - $1
+WHERE account_number = $2
+RETURNING id, account_number, owner, balance, currency, created_at, updated_at
+`
+
+type UpdateAccountWhenTransferParams struct {
+	Amount        int64 `json:"amount"`
+	AccountNumber int64 `json:"account_number"`
+}
+
+func (q *Queries) UpdateAccountWhenTransfer(ctx context.Context, arg UpdateAccountWhenTransferParams) (Account, error) {
+	row := q.db.QueryRowContext(ctx, updateAccountWhenTransfer, arg.Amount, arg.AccountNumber)
+	var i Account
+	err := row.Scan(
+		&i.ID,
+		&i.AccountNumber,
+		&i.Owner,
+		&i.Balance,
+		&i.Currency,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)

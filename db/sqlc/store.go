@@ -55,7 +55,7 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferParams) (Transfe
 
 	err := store.execTx(ctx, func(q *Queries) error {
 		var err error
-
+		// transfer
 		result.Transfer, err = q.CreateTransfer(ctx, CreateTransferParams{
 			FromAccountNumber: arg.FromAccountNumber,
 			ToAccountNumber:   arg.ToAccountNumber,
@@ -65,6 +65,7 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferParams) (Transfe
 			return err
 		}
 
+		// entry
 		result.FromEntry, err = q.CreateEntry(ctx, CreateEntryParams{
 			AccountNumber: arg.FromAccountNumber,
 			Amount:        -arg.Amount,
@@ -81,7 +82,16 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferParams) (Transfe
 			return err
 		}
 
-		// TODO: update accounts balance
+		//update balance
+		result.FromAccount, err = q.UpdateAccountWhenTransfer(ctx, UpdateAccountWhenTransferParams{
+			AccountNumber: arg.FromAccountNumber,
+			Amount:        arg.Amount,
+		})
+
+		result.ToAccount, err = q.UpdateAccountWhenReceive(ctx, UpdateAccountWhenReceiveParams{
+			AccountNumber: arg.ToAccountNumber,
+			Amount:        arg.Amount,
+		})
 
 		return nil
 	})

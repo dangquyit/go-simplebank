@@ -21,8 +21,7 @@ type Querier interface {
 	ListEntries(ctx context.Context, arg ListEntriesParams) ([]Entry, error)
 	ListTransfers(ctx context.Context, arg ListTransfersParams) ([]Transfer, error)
 	UpdateAccount(ctx context.Context, arg UpdateAccountParams) (Account, error)
-	UpdateAccountWhenReceive(ctx context.Context, arg UpdateAccountWhenReceiveParams) (Account, error)
-	UpdateAccountWhenTransfer(ctx context.Context, arg UpdateAccountWhenTransferParams) (Account, error)
+	UpdateAccountBalance(ctx context.Context, arg UpdateAccountBalanceParams) (Account, error)
 }
 
 var _ Querier = (*Queries)(nil)

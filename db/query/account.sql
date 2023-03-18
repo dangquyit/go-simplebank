@@ -24,13 +24,7 @@ SET balance = $2
 WHERE account_number = $1
 RETURNING *;
 
--- name: UpdateAccountWhenTransfer :one
-UPDATE accounts
-SET balance = balance - sqlc.arg(amount)
-WHERE account_number = sqlc.arg(account_number)
-RETURNING *;
-
--- name: UpdateAccountWhenReceive :one
+-- name: UpdateAccountBalance :one
 UPDATE accounts
 SET balance = balance + sqlc.arg(amount)
 WHERE account_number = sqlc.arg(account_number)

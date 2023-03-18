@@ -147,47 +147,20 @@ func (q *Queries) UpdateAccount(ctx context.Context, arg UpdateAccountParams) (A
 	return i, err
 }
 
-const updateAccountWhenReceive = `-- name: UpdateAccountWhenReceive :one
+const updateAccountBalance = `-- name: UpdateAccountBalance :one
 UPDATE accounts
 SET balance = balance + $1
 WHERE account_number = $2
 RETURNING id, account_number, owner, balance, currency, created_at, updated_at
 `
 
-type UpdateAccountWhenReceiveParams struct {
+type UpdateAccountBalanceParams struct {
 	Amount        int64 `json:"amount"`
 	AccountNumber int64 `json:"account_number"`
 }
 
-func (q *Queries) UpdateAccountWhenReceive(ctx context.Context, arg UpdateAccountWhenReceiveParams) (Account, error) {
-	row := q.db.QueryRowContext(ctx, updateAccountWhenReceive, arg.Amount, arg.AccountNumber)
-	var i Account
-	err := row.Scan(
-		&i.ID,
-		&i.AccountNumber,
-		&i.Owner,
-		&i.Balance,
-		&i.Currency,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
-	return i, err
-}
-
-const updateAccountWhenTransfer = `-- name: UpdateAccountWhenTransfer :one
-UPDATE accounts
-SET balance = balance - $1
-WHERE account_number = $2
-RETURNING id, account_number, owner, balance, currency, created_at, updated_at
-`
-
-type UpdateAccountWhenTransferParams struct {
-	Amount        int64 `json:"amount"`
-	AccountNumber int64 `json:"account_number"`
-}
-
-func (q *Queries) UpdateAccountWhenTransfer(ctx context.Context, arg UpdateAccountWhenTransferParams) (Account, error) {
-	row := q.db.QueryRowContext(ctx, updateAccountWhenTransfer, arg.Amount, arg.AccountNumber)
+func (q *Queries) UpdateAccountBalance(ctx context.Context, arg UpdateAccountBalanceParams) (Account, error) {
+	row := q.db.QueryRowContext(ctx, updateAccountBalance, arg.Amount, arg.AccountNumber)
 	var i Account
 	err := row.Scan(
 		&i.ID,

@@ -83,12 +83,12 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferParams) (Transfe
 		}
 
 		//update balance
-		result.FromAccount, err = q.UpdateAccountWhenTransfer(ctx, UpdateAccountWhenTransferParams{
+		result.FromAccount, err = q.UpdateAccountBalance(ctx, UpdateAccountBalanceParams{
 			AccountNumber: arg.FromAccountNumber,
-			Amount:        arg.Amount,
+			Amount:        -arg.Amount,
 		})
 
-		result.ToAccount, err = q.UpdateAccountWhenReceive(ctx, UpdateAccountWhenReceiveParams{
+		result.ToAccount, err = q.UpdateAccountBalance(ctx, UpdateAccountBalanceParams{
 			AccountNumber: arg.ToAccountNumber,
 			Amount:        arg.Amount,
 		})

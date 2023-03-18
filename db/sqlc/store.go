@@ -83,18 +83,38 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferParams) (Transfe
 		}
 
 		//update balance
-		result.FromAccount, err = q.UpdateAccountBalance(ctx, UpdateAccountBalanceParams{
-			AccountNumber: arg.FromAccountNumber,
-			Amount:        -arg.Amount,
-		})
-
-		result.ToAccount, err = q.UpdateAccountBalance(ctx, UpdateAccountBalanceParams{
-			AccountNumber: arg.ToAccountNumber,
-			Amount:        arg.Amount,
-		})
-
+		// using if handle deadlock when account1 transfer to account2 and account2 transfer to account1
+		if arg.FromAccountNumber < arg.ToAccountNumber {
+			result.FromAccount, result.ToAccount, err = updateMoney(ctx, q,
+				arg.FromAccountNumber, -arg.Amount,
+				arg.ToAccountNumber, arg.Amount)
+		} else {
+			result.ToAccount, result.FromAccount, err = updateMoney(ctx, q,
+				arg.ToAccountNumber, arg.Amount,
+				arg.FromAccountNumber, -arg.Amount)
+		}
 		return nil
 	})
 
 	return result, err
+}
+
+func updateMoney(
+	ctx context.Context,
+	q *Queries,
+	fromAccountNumber, amount1, toAccountNumber, amount2 int64,
+) (account1, account2 Account, err error) {
+	account1, err = q.UpdateAccountBalance(ctx, UpdateAccountBalanceParams{
+		Amount:        amount1,
+		AccountNumber: fromAccountNumber,
+	})
+
+	if err != nil {
+		return
+	}
+	account2, err = q.UpdateAccountBalance(ctx, UpdateAccountBalanceParams{
+		Amount:        amount2,
+		AccountNumber: toAccountNumber,
+	})
+	return
 }

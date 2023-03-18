@@ -93,7 +93,7 @@ func (store *Store) TransferTx(ctx context.Context, arg TransferParams) (Transfe
 				arg.ToAccountNumber, arg.Amount,
 				arg.FromAccountNumber, -arg.Amount)
 		}
-		return nil
+		return err
 	})
 
 	return result, err

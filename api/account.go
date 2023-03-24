@@ -39,7 +39,7 @@ type getAccountRequest struct {
 	Id int64 `uri:"id" binding:"required"`
 }
 
-func (server *Server) getAccount(ctx *gin.Context) {
+func (server *Server) getAccountById(ctx *gin.Context) {
 	var request getAccountRequest
 	if err := ctx.ShouldBindUri(&request); err != nil {
 		ctx.JSON(http.StatusBadRequest, errResponse(err))

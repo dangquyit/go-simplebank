@@ -1,6 +1,7 @@
 package api
 
 import (
+	"database/sql"
 	db "github.com/dangquyit/go-simplebank/db/sqlc"
 	"github.com/dangquyit/go-simplebank/util"
 	"github.com/gin-gonic/gin"
@@ -48,6 +49,10 @@ func (server *Server) getAccountById(ctx *gin.Context) {
 
 	account, err := server.store.GetAccountById(ctx, request.Id)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, errResponse(err))
+			return
+		}
 		ctx.JSON(http.StatusInternalServerError, errResponse(err))
 		return
 	}

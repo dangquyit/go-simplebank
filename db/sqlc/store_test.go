@@ -18,17 +18,17 @@ func TestStoreTransferTx(t *testing.T) {
 	errs := make(chan error)
 	//results := make(chan TransferTxResult)
 	for i := 0; i < n; i++ {
-		fromAccountNumber := account1.AccountNumber
-		toAccountNumber := account2.AccountNumber
+		fromAccountId := account1.ID
+		toAccountId := account2.ID
 
 		if i%2 == 1 {
-			fromAccountNumber, toAccountNumber = toAccountNumber, fromAccountNumber
+			fromAccountId, toAccountId = toAccountId, fromAccountId
 		}
 		go func() {
 			_, err := store.TransferTx(context.Background(), TransferParams{
-				FromAccountNumber: fromAccountNumber,
-				ToAccountNumber:   toAccountNumber,
-				Amount:            amount,
+				FromAccountId: fromAccountId,
+				ToAccountId:   toAccountId,
+				Amount:        amount,
 			})
 			errs <- err
 			//results <- result
@@ -98,9 +98,9 @@ func TestStoreTransferTx(t *testing.T) {
 	}
 
 	//check final updated balance
-	updateAccount1, err := testQueries.GetAccount(context.Background(), account1.AccountNumber)
+	updateAccount1, err := testQueries.GetAccountById(context.Background(), account1.ID)
 	require.NoError(t, err)
-	updateAccount2, err := testQueries.GetAccount(context.Background(), account2.AccountNumber)
+	updateAccount2, err := testQueries.GetAccountById(context.Background(), account2.ID)
 	require.NoError(t, err)
 	//require.Equal(t, account1.Balance-int64(n)*amount, updateAccount1.Balance)
 	//require.Equal(t, account2.Balance+int64(n)*amount, updateAccount2.Balance)

@@ -94,21 +94,6 @@ func (mr *MockStoreMockRecorder) DeleteAccount(arg0, arg1 interface{}) *gomock.C
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteAccount", reflect.TypeOf((*MockStore)(nil).DeleteAccount), arg0, arg1)
 }
 
-// GetAccount mocks base method.
-func (m *MockStore) GetAccount(arg0 context.Context, arg1 int64) (db.Account, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAccount", arg0, arg1)
-	ret0, _ := ret[0].(db.Account)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetAccount indicates an expected call of GetAccount.
-func (mr *MockStoreMockRecorder) GetAccount(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAccount", reflect.TypeOf((*MockStore)(nil).GetAccount), arg0, arg1)
-}
-
 // GetAccountById mocks base method.
 func (m *MockStore) GetAccountById(arg0 context.Context, arg1 int64) (db.Account, error) {
 	m.ctrl.T.Helper()
@@ -124,34 +109,19 @@ func (mr *MockStoreMockRecorder) GetAccountById(arg0, arg1 interface{}) *gomock.
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAccountById", reflect.TypeOf((*MockStore)(nil).GetAccountById), arg0, arg1)
 }
 
-// GetEntryById mocks base method.
-func (m *MockStore) GetEntryById(arg0 context.Context, arg1 int64) (db.Entry, error) {
+// GetEntry mocks base method.
+func (m *MockStore) GetEntry(arg0 context.Context, arg1 int64) (db.Entry, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetEntryById", arg0, arg1)
+	ret := m.ctrl.Call(m, "GetEntry", arg0, arg1)
 	ret0, _ := ret[0].(db.Entry)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetEntryById indicates an expected call of GetEntryById.
-func (mr *MockStoreMockRecorder) GetEntryById(arg0, arg1 interface{}) *gomock.Call {
+// GetEntry indicates an expected call of GetEntry.
+func (mr *MockStoreMockRecorder) GetEntry(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEntryById", reflect.TypeOf((*MockStore)(nil).GetEntryById), arg0, arg1)
-}
-
-// GetEntryFromAccountNumber mocks base method.
-func (m *MockStore) GetEntryFromAccountNumber(arg0 context.Context, arg1 db.GetEntryFromAccountNumberParams) ([]db.Entry, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetEntryFromAccountNumber", arg0, arg1)
-	ret0, _ := ret[0].([]db.Entry)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetEntryFromAccountNumber indicates an expected call of GetEntryFromAccountNumber.
-func (mr *MockStoreMockRecorder) GetEntryFromAccountNumber(arg0, arg1 interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEntryFromAccountNumber", reflect.TypeOf((*MockStore)(nil).GetEntryFromAccountNumber), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEntry", reflect.TypeOf((*MockStore)(nil).GetEntry), arg0, arg1)
 }
 
 // GetTransferById mocks base method.

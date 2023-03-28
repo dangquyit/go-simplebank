@@ -115,12 +115,11 @@ func requireBodyMatchAccount(t *testing.T, body *bytes.Buffer, account db.Accoun
 
 func randomAccount() db.Account {
 	return db.Account{
-		ID:            util.RandomInt(1, 1000),
-		AccountNumber: util.RandomAccountNumber(),
-		Owner:         util.RandomOwner(),
-		Balance:       util.RandomMoney(),
-		Currency:      util.RandomCurrency(),
-		CreatedAt:     time.Time{},
-		UpdatedAt:     time.Time{},
+		ID:        util.RandomInt(1, 1000),
+		Owner:     util.RandomOwner(),
+		Balance:   util.RandomMoney(),
+		Currency:  util.RandomCurrency(),
+		CreatedAt: time.Time{},
+		UpdatedAt: time.Time{},
 	}
 }

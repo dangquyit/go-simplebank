@@ -14,8 +14,8 @@ func createRandomEntry(t *testing.T) Entry {
 		Offset: 0,
 	})
 	arg := CreateEntryParams{
-		AccountNumber: accounts[rand.Intn(len(accounts))].AccountNumber,
-		Amount:        util.RandomMoney(),
+		AccountID: accounts[rand.Intn(len(accounts))].ID,
+		Amount:    util.RandomMoney(),
 	}
 
 	entry, err := testQueries.CreateEntry(context.Background(), arg)
@@ -23,7 +23,7 @@ func createRandomEntry(t *testing.T) Entry {
 	require.NoError(t, err)
 	require.NotEmpty(t, entry)
 	require.Equal(t, arg.Amount, entry.Amount)
-	require.Equal(t, arg.AccountNumber, entry.AccountNumber)
+	require.Equal(t, arg.AccountID, entry.AccountID)
 	return entry
 }
 
@@ -33,18 +33,10 @@ func TestCreateEntry(t *testing.T) {
 
 func TestGetEntry(t *testing.T) {
 	entry1 := createRandomEntry(t)
-	entries, err := testQueries.GetEntryFromAccountNumber(context.Background(), GetEntryFromAccountNumberParams{
-		AccountNumber: entry1.AccountNumber,
-		Limit:         5,
-		Offset:        0,
-	})
+	entry2, err := testQueries.GetEntry(context.Background(), entry1.ID)
 	require.NoError(t, err)
-	require.NotEmpty(t, entries)
-
-	for _, entry2 := range entries {
-		require.NotEmpty(t, entry2)
-		require.Equal(t, entry1.AccountNumber, entry2.AccountNumber)
-	}
+	require.NotEmpty(t, entry2)
+	require.Equal(t, entry1.AccountID, entry2.AccountID)
 }
 
 func TestListEntries(t *testing.T) {
@@ -53,9 +45,9 @@ func TestListEntries(t *testing.T) {
 		Offset: 0,
 	})
 	arg := ListEntriesParams{
-		AccountNumber: accounts[rand.Intn(len(accounts))].AccountNumber,
-		Limit:         5,
-		Offset:        0,
+		AccountID: accounts[rand.Intn(len(accounts)-1)].ID,
+		Limit:     5,
+		Offset:    0,
 	}
 	entries, err := testQueries.ListEntries(context.Background(), arg)
 

@@ -3,7 +3,6 @@ package api
 import (
 	"database/sql"
 	db "github.com/dangquyit/go-simplebank/db/sqlc"
-	"github.com/dangquyit/go-simplebank/util"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -21,10 +20,9 @@ func (server *Server) createAccount(ctx *gin.Context) {
 	}
 
 	arg := db.CreateAccountParams{
-		AccountNumber: util.RandomAccountNumber(),
-		Owner:         req.Owner,
-		Balance:       0,
-		Currency:      req.Currency,
+		Owner:    req.Owner,
+		Balance:  0,
+		Currency: req.Currency,
 	}
 
 	account, err := server.store.CreateAccount(ctx, arg)

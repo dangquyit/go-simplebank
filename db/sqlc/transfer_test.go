@@ -14,26 +14,26 @@ func createRandomTransfer(t *testing.T) Transfer {
 		Offset: 0,
 	})
 	n := len(listAccount)
-	var fromAccountNumber int64
-	var toAccountNumber int64
+	var fromAccountId int64
+	var toAccountId int64
 	for {
-		fromAccountNumber = listAccount[rand.Intn(n)].AccountNumber
-		toAccountNumber = listAccount[rand.Intn(n)].AccountNumber
-		if fromAccountNumber != toAccountNumber {
+		fromAccountId = listAccount[rand.Intn(n)].ID
+		toAccountId = listAccount[rand.Intn(n)].ID
+		if fromAccountId != toAccountId {
 			break
 		}
 	}
 	transfer, err := testQueries.CreateTransfer(context.Background(), CreateTransferParams{
-		FromAccountNumber: fromAccountNumber,
-		ToAccountNumber:   toAccountNumber,
-		Amount:            util.RandomMoney(),
+		FromAccountID: fromAccountId,
+		ToAccountID:   toAccountId,
+		Amount:        util.RandomMoney(),
 	})
 
 	require.NoError(t, err)
 	require.NotEmpty(t, transfer)
 
-	require.Equal(t, fromAccountNumber, transfer.FromAccountNumber)
-	require.Equal(t, toAccountNumber, transfer.ToAccountNumber)
+	require.Equal(t, fromAccountId, transfer.FromAccountID)
+	require.Equal(t, toAccountId, transfer.ToAccountID)
 
 	require.NotEmpty(t, transfer.Amount)
 	return transfer
@@ -47,10 +47,10 @@ func TestListTransfers(t *testing.T) {
 	transfer := createRandomTransfer(t)
 
 	transfers, err := testQueries.ListTransfers(context.Background(), ListTransfersParams{
-		FromAccountNumber: transfer.FromAccountNumber,
-		ToAccountNumber:   transfer.ToAccountNumber,
-		Limit:             5,
-		Offset:            0,
+		FromAccountID: transfer.FromAccountID,
+		ToAccountID:   transfer.ToAccountID,
+		Limit:         5,
+		Offset:        0,
 	})
 
 	require.NoError(t, err)

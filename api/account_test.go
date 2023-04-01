@@ -20,7 +20,7 @@ import (
 func TestGetAccountAPI(t *testing.T) {
 	account := randomAccount()
 
-	testCase := []struct {
+	testCases := []struct {
 		name          string
 		accountId     int64
 		buildStubs    func(store *mockdb.MockStore)
@@ -81,8 +81,8 @@ func TestGetAccountAPI(t *testing.T) {
 		// TODO: add more cases
 	}
 
-	for i := range testCase {
-		tc := testCase[i]
+	for i := range testCases {
+		tc := testCases[i]
 		t.Run(tc.name, func(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()

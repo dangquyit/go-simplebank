@@ -4,21 +4,17 @@ import (
 	"context"
 	"github.com/dangquyit/go-simplebank/util"
 	"github.com/stretchr/testify/require"
-	"math/rand"
 	"testing"
 )
 
 func createRandomTransfer(t *testing.T) Transfer {
-	listAccount, _ := testQueries.ListAccount(context.Background(), ListAccountParams{
-		Limit:  100,
-		Offset: 0,
-	})
-	n := len(listAccount)
+	fromAccount := createRandomAccount(t)
+	toAccount := createRandomAccount(t)
 	var fromAccountId int64
 	var toAccountId int64
 	for {
-		fromAccountId = listAccount[rand.Intn(n)].ID
-		toAccountId = listAccount[rand.Intn(n)].ID
+		fromAccountId = fromAccount.ID
+		toAccountId = toAccount.ID
 		if fromAccountId != toAccountId {
 			break
 		}

@@ -4,17 +4,13 @@ import (
 	"context"
 	"github.com/dangquyit/go-simplebank/util"
 	"github.com/stretchr/testify/require"
-	"math/rand"
 	"testing"
 )
 
 func createRandomEntry(t *testing.T) Entry {
-	accounts, _ := testQueries.ListAccount(context.Background(), ListAccountParams{
-		Limit:  1000,
-		Offset: 0,
-	})
+	randAccount := createRandomAccount(t)
 	arg := CreateEntryParams{
-		AccountID: accounts[rand.Intn(len(accounts))].ID,
+		AccountID: randAccount.ID,
 		Amount:    util.RandomMoney(),
 	}
 
@@ -40,12 +36,9 @@ func TestGetEntry(t *testing.T) {
 }
 
 func TestListEntries(t *testing.T) {
-	accounts, _ := testQueries.ListAccount(context.Background(), ListAccountParams{
-		Limit:  1000,
-		Offset: 0,
-	})
+	randAccount := createRandomAccount(t)
 	arg := ListEntriesParams{
-		AccountID: accounts[rand.Intn(len(accounts)-1)].ID,
+		AccountID: randAccount.ID,
 		Limit:     5,
 		Offset:    0,
 	}

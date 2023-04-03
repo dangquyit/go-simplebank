@@ -1,6 +1,6 @@
 makeFileDir := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 postgres:
-	docker run --name postgres -p 5431:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=1234 -d postgres:latest
+	docker run --name postgres --network bank-network -p 5431:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=1234 -d postgres:latest
 createdb:
 	docker exec -it postgres createdb --username=root --owner=root simple_bank
 dropdb:
